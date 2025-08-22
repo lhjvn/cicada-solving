@@ -1,8 +1,21 @@
 from GematriaPrimus import RUNE_TO_IDX, IDX_TO_RUNE
-from LiberPrimus import normalized_freq
 from collections import Counter
+from PrimusFrequencies import normalized_freq_atbash, normalized_freq_plaintext
 
-def score_mono_substitution(text: str, reference_freq=normalized_freq) -> float:
+def apply_shift(text: str, shift: int) -> str:
+    """
+    Apply a shift to the given text by shifting each rune by the specified amount.
+    """
+    shifted = ""
+    for char in text:
+        if char in RUNE_TO_IDX:
+            idx = (RUNE_TO_IDX[char] + shift) % len(IDX_TO_RUNE)
+            shifted += IDX_TO_RUNE[idx]
+        else:
+            shifted += char
+    return shifted
+
+def score_mono_substitution(text: str, reference_freq=normalized_freq_plaintext) -> float:
     """
     Score a text to detect if it's a mono-alphabetic substitution based on frequency analysis.
     Higher score indicates closer match to the expected frequency distribution.
@@ -34,7 +47,8 @@ def score_mono_substitution(text: str, reference_freq=normalized_freq) -> float:
 
     return score
 
-def find_best_substitution(ciphertext: str, key_space=None, reference_freq=normalized_freq) -> tuple:
+# This function can also test for atbash by first encrypting `str` atbash. Then the function returns key=0.
+def find_best_substitution(ciphertext: str, key_space=None, reference_freq=normalized_freq_plaintext) -> tuple:
     """
     Find the best substitution key for a mono-alphabetic cipher.
     
@@ -48,7 +62,7 @@ def find_best_substitution(ciphertext: str, key_space=None, reference_freq=norma
     """
     if key_space is None:
         # Default to trying all shifts in the rune alphabet
-        key_space = list(range(len(IDX_TO_RUNE)))
+        key_space = list(range(29))
     
     best_score = float('-inf')
     best_key = None
@@ -71,7 +85,6 @@ def find_best_substitution(ciphertext: str, key_space=None, reference_freq=norma
             best_score = score
             best_key = key
             best_text = decrypted
-    
     return best_key, best_score, best_text
 
 def atbash(text: str) -> str:
@@ -88,14 +101,13 @@ def atbash(text: str) -> str:
         str: The text after applying the Atbash transformation
     """
     result = ""
-    alphabet_size = len(IDX_TO_RUNE)
     
     for char in text:
         if char in RUNE_TO_IDX:
             # Find the position in the rune alphabet
             idx = RUNE_TO_IDX[char]
             # Calculate the mirror position
-            mirror_idx = (alphabet_size - 1) - idx
+            mirror_idx = (28 - idx) % 29
             # Replace with the rune at the mirror position
             result += IDX_TO_RUNE[mirror_idx]
         else:
@@ -103,3 +115,5 @@ def atbash(text: str) -> str:
             result += char
     
     return result
+
+__all__ = ["apply_shift", "atbash", "find_best_substitution", "score_mono_substitution"]
