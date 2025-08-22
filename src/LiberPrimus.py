@@ -15,7 +15,7 @@ Line     : /
 Page     : %
 """
 
-def get_section(n:int):
+def getSection(n:int):
     with open("../liber-primus.txt", "r", encoding="utf-8") as f:
         lines = f.read()
         return lines.split("$")[n-1]

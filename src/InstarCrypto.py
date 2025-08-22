@@ -1,8 +1,9 @@
 from GematriaPrimus import RUNE_TO_IDX, IDX_TO_RUNE
-from collections import Counter
-from PrimusFrequencies import normalized_freq_atbash, normalized_freq_plaintext
+from PrimusFrequencies import NORMALIZED_FREQ_PLAINTEXT
 
-def apply_shift(text: str, shift: int) -> str:
+from collections import Counter
+
+def applyShift(text: str, shift: int) -> str:
     """
     Apply a shift to the given text by shifting each rune by the specified amount.
     """
@@ -15,7 +16,7 @@ def apply_shift(text: str, shift: int) -> str:
             shifted += char
     return shifted
 
-def score_mono_substitution(text: str, reference_freq=normalized_freq_plaintext) -> float:
+def scoreMonoSubstitution(text: str, reference_freq=NORMALIZED_FREQ_PLAINTEXT) -> float:
     """
     Score a text to detect if it's a mono-alphabetic substitution based on frequency analysis.
     Higher score indicates closer match to the expected frequency distribution.
@@ -48,7 +49,7 @@ def score_mono_substitution(text: str, reference_freq=normalized_freq_plaintext)
     return score
 
 # This function can also test for atbash by first encrypting `str` atbash. Then the function returns key=0.
-def find_best_substitution(ciphertext: str, key_space=None, reference_freq=normalized_freq_plaintext) -> tuple:
+def findBestSubstitution(ciphertext: str, key_space=None, reference_freq=NORMALIZED_FREQ_PLAINTEXT) -> tuple:
     """
     Find the best substitution key for a mono-alphabetic cipher.
     
@@ -79,7 +80,7 @@ def find_best_substitution(ciphertext: str, key_space=None, reference_freq=norma
                 decrypted += char
         
         # Score the decrypted text
-        score = score_mono_substitution(decrypted, reference_freq)
+        score = scoreMonoSubstitution(decrypted, reference_freq)
         
         if score > best_score:
             best_score = score
@@ -116,4 +117,4 @@ def atbash(text: str) -> str:
     
     return result
 
-__all__ = ["apply_shift", "atbash", "find_best_substitution", "score_mono_substitution"]
+__all__ = ["applyShift", "atbash", "findBestSubstitution", "scoreMonoSubstitution"]
