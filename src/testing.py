@@ -13,7 +13,7 @@ class TestShiftDetection(unittest.TestCase):
         self.assertTrue(self.keys3 == 3)
 
     def tearDown(self):
-        print("[+] Finished testing shift detection")
+        print("\n[+] Finished testing shift detection")
         pass
 
 class TestAtbashDetection(unittest.TestCase):
@@ -22,11 +22,12 @@ class TestAtbashDetection(unittest.TestCase):
         self.ctx_atbash = atbash(apply_shift(self.ctx_s3, 3))
 
     def test_atbash_detection(self):
-        self.key, _, _ = find_best_substitution(self.ctx_atbash, list(range(29)), reference_freq=normalized_freq_atbash)
+        self.key, _, _ = find_best_substitution(self.ctx_atbash, reference_freq=normalized_freq_atbash)
         self.assertTrue(self.key == 0) # key should be 0 since it matches the reference frequency
+        print()
 
     def tearDown(self):
-        print("[+] Finished testing atbash detection")
+        print("\n[+] Finished testing atbash detection")
         pass
 
 if __name__ == "__main__":
