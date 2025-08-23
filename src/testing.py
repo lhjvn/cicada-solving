@@ -1,7 +1,28 @@
 import unittest
-from InstarCrypto import atbash, findBestSubstitution, applyShift
+from InstarCrypto import atbash, findBestSubstitution, applyShift, applyMultiShift
 from LiberPrimus import getSection
 from PrimusFrequencies import NORMALIZED_FREQ_ATBASH
+
+
+class TestShiftEncryption(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def testSingleShift(self):
+        self.assertEqual(applyShift("ᚠ", 3), "ᚩ") # ᚠ = 0 =3> ᚩ=3
+        self.assertEqual(applyShift("ᚠ", -3), "ᚣ") # ᚠ = 0 =-3> 26
+        self.assertEqual(applyShift("lorem ipsum", 4), "lorem ipsum") # we only allow operations on runes
+
+        print("\n[+] Finished testing single shift")
+
+    def testMultiShift(self):
+        self.assertEqual(applyMultiShift("ᚠ", [3, -3]), "ᚩ") # ᚠ = 0 =3> ᚩ=3 =-3> ᚣ=26
+        self.assertEqual(applyMultiShift("ᚠabcᚠ", [3, -3]), "ᚩabcᚣ") # ᚠ = 0 =3> ᚩ=3 =1> ᚪ=4
+        self.assertEqual(applyMultiShift("lorem ipsum", [4]), "lorem ipsum") # we only allow operations on runes
+        print("\n[+] Finished testing multi shift")
+
+
 # Testing wether we can succesfully detect a substitution
 class TestShiftDetection(unittest.TestCase):
     def setUp(self):

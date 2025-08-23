@@ -16,6 +16,37 @@ def applyShift(text: str, shift: int) -> str:
             shifted += char
     return shifted
 
+def applyMultiShift(text: str, shifts:any) -> str:
+    """
+    Apply multiple shifts to the given text by shifting each rune by the specified amounts in sequence.
+    """
+    key = []
+    # Parse key
+    if type(shifts) == str:
+        print("[?] Key is given in runes, parsing used GP IDX")
+        key = [RUNE_TO_IDX[s] for s in shifts if s in RUNE_TO_IDX]
+        print(f'[?] {shifts} <- {key}')
+    elif type(shifts) == list:
+        key = shifts
+    try:
+        sum(key)
+    except TypeError:
+        raise TypeError(f"Unsupported key type: Input does not contain valid shifts values")
+
+    shifted = ""
+    shift_len = len(key)
+    key_idx = 0
+    for i in range(len(text)):
+        char = text[i]
+        if char in RUNE_TO_IDX:
+            idx = (RUNE_TO_IDX[char] + key[key_idx % shift_len]) % len(IDX_TO_RUNE)
+            shifted += IDX_TO_RUNE[idx]
+            key_idx += 1 # only increment key_idx when we shift a valid rune
+        else:
+            shifted += char
+    return shifted
+
+
 def scoreMonoSubstitution(text: str, reference_freq=NORMALIZED_FREQ_PLAINTEXT) -> float:
     """
     Score a text to detect if it's a mono-alphabetic substitution based on frequency analysis.
@@ -116,5 +147,6 @@ def atbash(text: str) -> str:
             result += char
     
     return result
+
 
 __all__ = ["applyShift", "atbash", "findBestSubstitution", "scoreMonoSubstitution"]
