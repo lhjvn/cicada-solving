@@ -149,4 +149,4 @@ def atbash(text: str) -> str:
     return result
 
 
-__all__ = ["applyShift", "atbash", "findBestSubstitution", "scoreMonoSubstitution"]
+__all__ = ["applyShift","applyMultiShift", "atbash", "findBestSubstitution", "scoreMonoSubstitution"]
